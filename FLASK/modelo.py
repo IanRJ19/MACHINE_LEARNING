@@ -1,28 +1,33 @@
-from flask import Flask, render_template, request
+import numpy as np
+from flask import Flask, request, jsonify, render_template
 import pickle
 
-# Cargamos el modelo
-with open('ruta_del_modelo.pkl', 'rb') as file:
-    modelo = pickle.load(file)
-
 app = Flask(__name__)
+model = pickle.load(open('FLASK/model.pkl', 'rb'))
 
+@app.route('/')
+def home():
+    return render_template('index.html')
 
+@app.route('/predict',methods=['POST'])
+def predict():
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    prediccion = None
-    if request.method == 'POST':
-        # Aquí debes recoger todos los datos que necesita tu modelo para hacer una predicción
-        dato1 = float(request.form['dato1'])
-        dato2 = float(request.form['dato2'])
-        # ... (todos los datos necesarios)
+    int_features = [int(x) for x in request.form.values()]
+    final_features = [np.array(int_features)]
+    prediction = model.predict(final_features)
 
-        datos = [dato1, dato2]  # etc
-        prediccion = modelo.predict([datos])[0]
-        
-    return render_template('index.html', prediccion=prediccion)
+    output = round(prediction[0], 2)
 
+    return render_template('index.html', prediction_text='Sales should be $ {}'.format(output))
 
-if __name__ == '__main__':
+@app.route('/results',methods=['POST'])
+def results():
+
+    data = request.get_json(force=True)
+    prediction = model.predict([np.array(list(data.values()))])
+
+    output = prediction[0]
+    return jsonify(output)
+
+if __name__ == "__main__":
     app.run(debug=True)
