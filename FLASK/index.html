@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deserción de citas hospitalarias</title>
+</head>
+<body>
+    <h1>Predecir Deserción de Citas Hospitalarias</h1>
+
+    <form action="/" method="post">
+        <!-- Aquí colocarás todos los campos necesarios para recoger los datos -->
+        Dato 1: <input type="text" name="dato1" required><br>
+        Dato 2: <input type="text" name="dato2" required><br>
+        <!-- ... -->
+        <input type="submit" value="Predecir">
+    </form>
+
+    {% if prediccion is not none %}
+        <h2>Resultado:</h2>
+        <p>La predicción es: {{ prediccion }}</p>
+    {% endif %}
+</body>
+</html>
